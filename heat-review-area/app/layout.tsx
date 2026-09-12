@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import { InputSearchProvider } from "./context/InputSearchContext";
+import { MapLocationContextProvider } from "./context/MapLocationContext";
+import Script from "next/script";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,6 +20,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+
+  
   return (
     <html
       lang="en"
@@ -34,16 +38,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="https://googleapis.com"
           rel="stylesheet"
         />
-        <link
-          href="https://googleapis.com"
-          rel="stylesheet"
-        />
+        
+
+        
+
+
       </head>
 
-      <body className="min-h-full flex flex-col">
-
-        {children}
-        
+      <body className="bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+        <main className="w-full pt-16 bg-background min-h-[calc(100vh-140px)]">
+          <InputSearchProvider>
+            <MapLocationContextProvider>
+              {children}
+            </MapLocationContextProvider>
+          </InputSearchProvider>
+        </main>
+        <Script 
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_TOKEN}&libraries=places`}
+          strategy="beforeInteractive"
+        />
       </body>
 
     </html>
