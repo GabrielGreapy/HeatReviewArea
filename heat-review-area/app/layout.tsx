@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { InputSearchProvider } from "./context/InputSearchContext";
 import { MapLocationContextProvider } from "./context/MapLocationContext";
+import Header from "./components/site-components/header";
 import Script from "next/script";
+import Footer from "./components/site-components/footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,25 +40,52 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="https://googleapis.com"
           rel="stylesheet"
         />
-        
+        <style>{`
+          @layer base {
+            html,
+            body {
+              margin: 0;
+              padding: 0;
+            }
 
-        
+            body {
+              overscroll-behavior: none;
+            }
 
+            main > :first-child {
+              margin-top: 0 !important;
+            }
 
-      </head>
+            main > :last-child {
+              margin-bottom: 0 !important;
+            }
+          }
 
-      <body className="bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-        <main className="w-full pt-16 bg-background min-h-[calc(100vh-140px)]">
-          <InputSearchProvider>
-            <MapLocationContextProvider>
-              {children}
-            </MapLocationContextProvider>
-          </InputSearchProvider>
-        </main>
+          ::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
         <Script 
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_TOKEN}&libraries=places`}
           strategy="beforeInteractive"
         />
+
+      </head>
+
+      <body className="bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed m-0 p-0 overscroll-behavior-none"
+      >        
+
+        
+          <Header />
+          <main className="w-full pt-16 bg-background min-h-[calc(100vh-140px)]">
+            <InputSearchProvider>
+              <MapLocationContextProvider>
+                {children}
+              </MapLocationContextProvider>
+            </InputSearchProvider>
+          </main>
+          <Footer />
+          
       </body>
 
     </html>

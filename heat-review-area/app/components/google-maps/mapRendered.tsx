@@ -36,7 +36,7 @@ export default function Map(){
             const map = new window.google.maps.Map(
                 mapRef.current, {
                     center : begPosition,
-                    zoom : 8
+                    zoom : 18
                 }
             )
             console.log("Criado o elemnto map")
