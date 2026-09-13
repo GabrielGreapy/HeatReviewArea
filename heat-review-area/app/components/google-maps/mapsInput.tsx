@@ -55,7 +55,15 @@ export default function MapsInput(){
                 const lat = place.geometry.location.lat();
                 const lng = place.geometry.location.lng();
                 const address = place.formatted_address||place.name|| "";
-                handleLocationSelect({lat, lng, address});
+                const vp = place.geometry.viewport;
+                const bounds = {
+                    north: vp.getNorthEast().lat(),
+                    east: vp.getNorthEast().lng(),
+                    south: vp.getSouthWest().lat(),
+                    west: vp.getSouthWest().lng(),
+                }
+                handleLocationSelect({lat, lng, address, bounds});
+
             }
             )
         }

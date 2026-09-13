@@ -6,6 +6,7 @@ import { MapLocationContextProvider } from "./context/MapLocationContext";
 import Header from "./components/site-components/header";
 import Script from "next/script";
 import Footer from "./components/site-components/footer";
+import { FilterContextProvider } from "./context/FilterContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -80,7 +81,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="w-full pt-16 bg-background min-h-[calc(100vh-140px)]">
             <InputSearchProvider>
               <MapLocationContextProvider>
-                {children}
+                <FilterContextProvider>
+                  {children}
+                </FilterContextProvider>
               </MapLocationContextProvider>
             </InputSearchProvider>
           </main>

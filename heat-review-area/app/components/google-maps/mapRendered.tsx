@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useMapLocation } from "@/app/context/MapLocationContext";
 import { useInputSearch } from "@/app/context/InputSearchContext";
+import { strict } from "assert";
 declare global{
     interface Window{
         google : any
@@ -36,7 +37,11 @@ export default function Map(){
             const map = new window.google.maps.Map(
                 mapRef.current, {
                     center : begPosition,
-                    zoom : 18
+                    zoom : 18,
+                    retriction : location.bounds ?{
+                        latLngBounds : location.bounds,
+                        strictBounds : true
+                    } : undefined,
                 }
             )
             console.log("Criado o elemnto map")
