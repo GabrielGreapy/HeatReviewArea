@@ -169,7 +169,7 @@ export default function Filter() {
             Pontos individuais de hotéis, restaurantes, museus e atrações com notas e comentários.
           </p>
           <div className="mt-4 pt-3 border-t border-surface-container-high flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
-            <span>Precisão por CNPJ/Ponto</span>
+            
             <span className={filteringBy === "establishments" ? "text-primary font-semibold" : "text-on-surface-variant"}>
               {filteringBy === "establishments" ? "Ativo no visor" : "Alternar modo"}
             </span>
