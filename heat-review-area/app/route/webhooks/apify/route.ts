@@ -1,169 +1,93 @@
-import { NextResponse } from "next/server";
-import { db } from "@/app/lib/firebase-admin";
+import { NextRequest, NextResponse } from "next/server";
+import { dbClient } from "@/app/lib/firebase-client"; // ou seu firebase-admin no servidor
+import { doc, updateDoc, collection, writeBatch } from "firebase/firestore";
+import { Place } from "@/app/types";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function fetchBoundaryGeoJSON(queryName: string) {
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      queryName
-    )}&polygon_geojson=1&format=json`;
-
-    const res = await fetch(url, {
-      headers: { "User-Agent": "HeatReviewArea/1.0 (contato@seudominio.com)" },
-    });
-
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    if (data && data.length > 0 && data[0].geojson) {
-      return {
-        type: data[0].geojson.type,
-        coordinates: data[0].geojson.coordinates,
-        boundingbox: data[0].boundingbox,
-      };
-    }
-  } catch (error) {
-    console.error(`Erro ao buscar fronteira de ${queryName}:`, error);
-  }
-  return null;
-}
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { eventData } = body;
 
-    if (!eventData || !eventData.actorRunId || !eventData.defaultDatasetId) {
-      return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
-    }
+    // 1. Extrai dados do payload enviado pelo Apify / Webhook
+    const { runId, status, items, cityName, cityNameSearch } = body;
 
-    const runId = eventData.actorRunId;
-    const datasetId = eventData.defaultDatasetId;
-    const apiKey = process.env.APIFY_TOKEN;
-
-    const datasetUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${apiKey}&clean=true`;
-    const datasetRes = await fetch(datasetUrl);
-    const places = await datasetRes.json();
-
-    if (!Array.isArray(places)) {
-      return NextResponse.json({ error: "Dataset inválido" }, { status: 400 });
-    }
-
-    const neighborhoodsSet = new Set<string>();
-    const streetsSet = new Set<string>();
-    let cityName = "";
-
-    let batch = db.batch();
-    let operationCount = 0;
-
-    const commitBatchIfNeeded = async () => {
-      if (operationCount >= 450) {
-        await batch.commit();
-        batch = db.batch();
-        operationCount = 0;
-      }
-    };
-
-    // 1. Processa e enfileira os locais
-    for (const place of places) {
-      const lat = place.location?.lat || 0;
-      const lng = place.location?.lng || 0;
-
-      if (place.neighborhood) neighborhoodsSet.add(place.neighborhood);
-      if (place.street) streetsSet.add(place.street);
-      if (place.city && !cityName) cityName = place.city;
-
-      const placeId = place.id || `${lat}_${lng}`.replace(/\./g, "_");
-      const placeRef = db.collection("places").doc(placeId);
-
-      batch.set(
-        placeRef,
-        {
-          title: place.title || "",
-          address: place.address || "",
-          street: place.street || "",
-          neighborhood: place.neighborhood || "",
-          city: place.city || "",
-          location: { lat, lng },
-          totalReviews: place.reviewsCount || place.reviews?.length || 0,
-          rating: place.totalScore || 0,
-          reviews: place.reviews || [],
-          updatedAt: new Date().toISOString(),
-          lastRunId: runId,
-        },
-        { merge: true }
+    if (!runId) {
+      return NextResponse.json(
+        { error: "runId é obrigatório." },
+        { status: 400 }
       );
-
-      operationCount++;
-      await commitBatchIfNeeded();
     }
 
-    // 2. Busca fronteiras dos bairros com controle de taxa (1s por req)
-    const neighborhoods = Array.from(neighborhoodsSet);
-    for (const neighborhood of neighborhoods) {
-      const searchQuery = cityName
-        ? `${neighborhood}, ${cityName}`
-        : neighborhood;
+    const jobRef = doc(dbClient, "scraping_jobs", runId);
 
-      const boundaryData = await fetchBoundaryGeoJSON(searchQuery);
+    // 2. Se o Apify falhou ou cancelou a execução
+    if (status === "FAILED" || status === "ABORTED") {
+      await updateDoc(jobRef, {
+        status: "FAILED",
+        error: body.error || "O job do Apify falhou.",
+        updatedAt: new Date(),
+      });
 
-      if (boundaryData) {
-        const boundaryId = `${neighborhood}_${cityName || "default"}`
-          .toLowerCase()
-          .replace(/\s+/g, "_");
+      return NextResponse.json({ message: "Job marcado como FAILED." });
+    }
 
-        const boundaryRef = db.collection("boundaries").doc(boundaryId);
+    // 3. Se o Job foi concluído com sucesso e temos estabelecimentos
+    if (status === "SUCCEEDED" || status === "COMPLETED") {
+      const placesList: Place[] = items || [];
 
-        batch.set(
-          boundaryRef,
-          {
-            name: neighborhood,
-            city: cityName,
-            type: "NEIGHBORHOOD",
-            geojson: boundaryData,
-            updatedAt: new Date().toISOString(),
-          },
-          { merge: true }
-        );
+      if (placesList.length > 0) {
+        // Usamos WriteBatch do Firestore para salvar múltiplos locais de forma performática
+        const batch = writeBatch(dbClient);
+        const searchesRef = collection(dbClient, "searches");
 
-        operationCount++;
-        await commitBatchIfNeeded();
+        placesList.forEach((place) => {
+          // Garante a presença das coordenadas antes de salvar
+          if (place.location?.lat && place.location?.lng) {
+            const newDocRef = doc(searchesRef);
+
+            batch.set(newDocRef, {
+              title: place.title || place.name || "Sem nome",
+              rating: place.rating || null,
+              reviewsCount: place.reviewsCount || 0,
+              address: place.address || place.street || "",
+              street: place.street || "",
+              neighborhood: place.neighborhood || "",
+              city: cityName || "",
+              cityNameSearch: (cityNameSearch || cityName || "").trim().toLowerCase(),
+              location: {
+                lat: place.location.lat,
+                lng: place.location.lng,
+              },
+              placeId: place.placeId || "",
+              url: place.url || "",
+              runId: runId,
+              createdAt: new Date(),
+            });
+          }
+        });
+
+        // Executa a gravação em lote no banco
+        await batch.commit();
       }
 
-      await delay(1000);
+      // 4. Atualiza o status do Job para COMPLETED
+      // O seu listener `listenToScrapeJob` no frontend ouvirá essa alteração instantaneamente!
+      await updateDoc(jobRef, {
+        status: "COMPLETED",
+        totalItemsSaved: placesList.length,
+        updatedAt: new Date(),
+      });
+
+      return NextResponse.json({
+        message: "Dados salvos e job finalizado com sucesso!",
+        totalSaved: placesList.length,
+      });
     }
 
-    // 3. Salva os metadados dos filtros
-    const filterRef = db.collection("filter_metadata").doc(runId);
-    batch.set(filterRef, {
-      city: cityName,
-      neighborhoods: Array.from(neighborhoodsSet),
-      streets: Array.from(streetsSet),
-      totalPlaces: places.length,
-      createdAt: new Date().toISOString(),
-    });
-    operationCount++;
-
-    // 4. Atualiza o status do Job para COMPLETED
-    const jobRef = db.collection("scraping_jobs").doc(runId);
-    batch.update(jobRef, {
-      status: "COMPLETED",
-      placesCount: places.length,
-      updatedAt: new Date().toISOString(),
-    });
-    operationCount++;
-
-    await batch.commit();
-
-    return NextResponse.json({
-      success: true,
-      message: "Scraping, fronteiras geográficas e filtros salvos no Firestore com sucesso!",
-    });
+    return NextResponse.json({ message: "Evento ignorado / Status pendente." });
   } catch (error: any) {
-    console.error("Erro no processamento do Webhook Apify:", error);
+    console.error("❌ Erro ao processar webhook do Apify:", error);
     return NextResponse.json(
-      { error: error.message || "Erro interno no Webhook" },
+      { error: "Erro interno no servidor", details: error.message },
       { status: 500 }
     );
   }

@@ -1,23 +1,21 @@
-import { onSnapshot, doc } from "@firebase/firestore";
+import { onSnapshot, doc } from "firebase/firestore";
 import { dbClient } from "../lib/firebase-client";
-
-interface ScrapeParams {
-  cityName: string;
-  maxPlaces?: number;
-  maxReviews?: number;
-}
+import { ScrapeParams } from "../types";
 
 export async function startScrapeJob({
   cityName,
   maxPlaces = 50,
   maxReviews = 100,
 }: ScrapeParams) {
+  const normalizedCity = cityName.trim().toLowerCase();
+
   const response = await fetch("/route/apify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       searchString: cityName,
       locationQuery: cityName,
+      cityNameSearch: normalizedCity,
       maxPlaces,
       maxReviews,
     }),
@@ -52,14 +50,17 @@ export function listenToScrapeJob(
       const data = docSnap.data();
 
       if (data.status === "COMPLETED") {
+        console.log("🎉 Processamento concluído com sucesso!");
         onComplete();
         unsubscribe();
       } else if (data.status === "FAILED") {
+        console.error("❌ Processamento falhou:", data.error);
         onError(data.error || "Falha no scraping");
         unsubscribe();
       }
     },
     (error) => {
+      console.error("❌ Erro no snapshot do Firestore:", error);
       onError(error);
       unsubscribe();
     }
