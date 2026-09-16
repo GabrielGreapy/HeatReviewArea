@@ -7,7 +7,7 @@ export interface SearchLocalization {
     address : string;
     lat : number;
     lng : number;
-    bounds: { north: number; south: number; east: number; west: number } | null;
+    
 }
 
 interface InputSearchContextType {

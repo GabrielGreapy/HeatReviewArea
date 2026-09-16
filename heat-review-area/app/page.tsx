@@ -1,6 +1,8 @@
 import Map from "./components/google-maps/mapRendered";
 import MapsInput from "./components/google-maps/mapsInput";
-import Filter from "./components/site-components/config-components/filter";
+import Info from "./components/site-components/info";
+import RetryScrape from "./components/site-components/reScrape";
+import Welcome from "./components/site-components/welcome";
 
 
 export default function Home(){
@@ -8,9 +10,10 @@ export default function Home(){
 
     return(
         <div className="max-w-6xl mx-auto px-6 pt-12 pb-16 flex flex-col items-center text-center">
+            <Welcome />
             <MapsInput />
             <Map/>
-            
+            <Info />
         </div>
 
     )

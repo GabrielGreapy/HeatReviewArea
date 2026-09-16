@@ -202,7 +202,7 @@ export async function POST(req: Request) {
             name: neighborhood,
             city: cityName,
             type: "NEIGHBORHOOD",
-            geojson: boundaryData,
+           
             updatedAt: new Date().toISOString(),
           },
           { merge: true }
