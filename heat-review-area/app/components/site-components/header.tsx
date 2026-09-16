@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 export default function Header() {
   const router = useRouter();
   return (
@@ -10,7 +10,7 @@ export default function Header() {
         {/* Lado Esquerdo: Logo e Título */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shadow-[0_2px_8px_rgba(141,75,0,0.12)]">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" onClick={ () => router.push("/")}>
   <defs
   >
     <linearGradient id="heatGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
@@ -30,15 +30,15 @@ export default function Header() {
   <path d="M22 48h20v2H22z" fill="#cbd5e1"/>
 </svg>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col" onClick={ () => router.push("/")}>
             <div className="flex items-center gap-1"
-            onClick={() => router.push("/")}>
-              <span className="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">
+            >
+              <a className="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface" href=""> 
                 ThermoTurismo
-              </span>
+              </a>
             </div>
             <span className="font-label-sm text-label-sm text-on-surface-variant">
-              Monitoramento de turismo Urbano
+              Monitoramento de Turismo Urbano
             </span>
           </div>
         </div>
@@ -51,6 +51,7 @@ export default function Header() {
               className="px-4 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md"
               data-path="analise-termica"
               onClick={() => router.push("/analises")}
+              href=""
             >
               Análises guardadas
             </a>
@@ -61,6 +62,7 @@ export default function Header() {
           <a
             className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md"
             data-path="api-docs"
+            href=""
             onClick={() => router.push("/docs")}
           >
             <span className="material-symbols-outlined text-[18px]">terminal</span>
