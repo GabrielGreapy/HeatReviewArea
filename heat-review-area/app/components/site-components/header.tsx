@@ -1,6 +1,7 @@
 "use client";
-
+import { useRouter } from "next/router";
 export default function Header() {
+  const router = useRouter();
   return (
     <header className="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="h-[3px] w-full bg-gradient-to-r from-secondary-fixed-dim via-primary-fixed-dim to-primary"></div>
@@ -10,7 +11,8 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shadow-[0_2px_8px_rgba(141,75,0,0.12)]">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <defs>
+  <defs
+  >
     <linearGradient id="heatGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stopColor="#38bdf8"/>
       <stop offset="45%" stopColor="#f59e0b"/>
@@ -29,7 +31,8 @@ export default function Header() {
 </svg>
           </div>
           <div className="flex flex-col">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1"
+            onClick={() => router.push("/")}>
               <span className="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">
                 ThermoTurismo
               </span>
@@ -47,7 +50,7 @@ export default function Header() {
             <a
               className="px-4 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md"
               data-path="analise-termica"
-              href="#"
+              onClick={() => router.push("/analises")}
             >
               Análises guardadas
             </a>
@@ -58,7 +61,7 @@ export default function Header() {
           <a
             className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md"
             data-path="api-docs"
-            href="#"
+            onClick={() => router.push("/docs")}
           >
             <span className="material-symbols-outlined text-[18px]">terminal</span>
             API Docs
