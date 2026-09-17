@@ -1,36 +1,92 @@
-
-
 export default function Footer() {
-    return (
-        <div className="w-full px-8 py-space-xl">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-space-xl items-start">
-                <div className="space-y-space-xs">
-                    <div className="flex items-center gap-space-xs"><span className="font-headline-sm text-headline-sm font-bold text-on-surface">ThermoTurismo</span>
-                    </div>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Feito por Gabriel Martins</p>
-                </div>
-                <div className="space-y-space-xs">
-                    <div className="font-label-md text-label-md text-on-surface font-semibold uppercase tracking-wider">
-                        APIS UTILIZADAS:</div>
-                    <div className="space-y-1 font-body-sm text-body-sm text-on-surface-variant">
-                        <p className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
-                            API GooglePlaces-AutoComplete</p>
-                        <p className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
-                            API GoogleMaps-Maps</p>
-                        <p className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-secondary">check_circle</span> Rede
-                            API Apify-GoogleMapsScraper</p>
-                    </div>
-                </div>
-                <div className="space-y-space-xs">
-                    <div className="font-label-md text-label-md text-on-surface font-semibold uppercase tracking-wider">Dê uma olhada na nossa Documentação</div>
-                    
-                </div>
+  return (
+    <footer className="w-full bg-slate-900 text-slate-300 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 py-12 md:px-8">
+        {/* Grid Principal */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
+          
+          {/* Coluna 1: Branding & Autor */}
+          <div className="space-y-3 md:col-span-1">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-amber-500 text-2xl">
+                thermostat
+              </span>
+              <span className="text-xl font-bold tracking-tight text-white">
+                ThermoTurismo
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              Desenvolvido por{" "}
+              <span className="font-medium text-slate-200">Gabriel Martins</span>
+            </p>
+          </div>
 
-            </div>
-            <div className="mt-space-xl pt-space-md flex flex-col sm:flex-row justify-between items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
-                <p>Essa aplicação foi criada no intuito de pesquisa e estudo de apis, não sou dono delas apenas a utilizo. Qualquer dado raspado não haverá nomes de ninguem para a segurança de todos.</p>
-                
-            </div>
+          {/* Coluna 2: APIs Utilizadas */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              APIs Utilizadas
+            </h3>
+            <ul className="space-y-2 text-xs text-slate-300">
+              <li className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-emerald-400">
+                  check_circle
+                </span>
+                <span>Google Places AutoComplete</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-emerald-400">
+                  check_circle
+                </span>
+                <span>Google Maps API</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-emerald-400">
+                  check_circle
+                </span>
+                <span>Apify Google Maps Scraper</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Coluna 3: Documentação */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Documentação
+            </h3>
+            <a
+              href="#docs"
+              className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-medium transition-colors"
+            >
+              <span>Acessar documentação do projeto</span>
+              <span className="material-symbols-outlined text-[14px]">
+                arrow_forward
+              </span>
+            </a>
+          </div>
+
+          {/* Coluna 4: Status / Badge */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Ambiente
+            </h3>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Pesquisa & Academic
+            </span>
+          </div>
+
         </div>
-    )
+
+        {/* Divisória e Disclaimer Legal */}
+        <div className="mt-10 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400 leading-relaxed">
+          <p className="max-w-3xl">
+            Esta aplicação foi desenvolvida exclusivamente para fins acadêmicos e de estudo de consumo de APIs. Não há propriedade sobre os serviços listados. Todos os dados coletados passam por processo de anonimização para garantia de privacidade.
+          </p>
+          <p className="shrink-0 text-slate-400">
+            &copy; {new Date().getFullYear()} ThermoTurismo
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 }
