@@ -18,16 +18,23 @@ export interface Place {
   url?: string;
 }
 
-// Parâmetros para o serviço de Scraping
+
 export interface ScrapeParams {
   cityName: string;
   maxPlaces?: number;
   maxReviews?: number;
 }
 
-// Job de scraping monitorado no Firestore
 export interface ScrapeJob {
   status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
   error?: string;
   cityName?: string;
+}
+
+export interface LoadedAnalysis {
+  id: string,
+    cityName : string,
+  hourOfAnalisis : string,
+    status : "COMPLETED" | "SCRAPING" | "ERROR"
+
 }

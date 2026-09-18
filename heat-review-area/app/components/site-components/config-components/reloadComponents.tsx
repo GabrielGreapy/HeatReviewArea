@@ -1,10 +1,16 @@
 "use client"
+
+import { useState } from "react";
+
 interface ReloadLogProps{
     onReload : () => void;
 }
 
 
+
 export default function ReloadLogs({onReload} : ReloadLogProps){
+    
+
 
     return(
         <button

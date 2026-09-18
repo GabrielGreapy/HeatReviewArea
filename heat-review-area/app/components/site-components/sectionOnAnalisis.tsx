@@ -22,6 +22,7 @@ export default function SectionAnalisis() {
   }
   useEffect( () => {
     searchMetrics();
+    console.log("Reload")
   },[])
 
 
@@ -53,7 +54,7 @@ export default function SectionAnalisis() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 shrink-0 self-start md:self-auto">
-            <ReloadLogs onReload = { searchMetrics }/>
+            <ReloadLogs onReload={ searchMetrics }/>
 
            
           </div>
