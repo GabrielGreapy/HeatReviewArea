@@ -36,12 +36,12 @@ export default function Docs() {
                 Frontend Next.js (App Router)
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Renderização híbrida (SSR + ISR) do mapa 3D com Deck.gl e Maplibre. Ingestão de GeoJSONs pré-calculados e caching incremental por cidade salva.
+                Renderização por meio de API do Google Maps/Maps com mapa 2D. Desenhando elementos do mapa com o draw (extensão desta mesma API).
               </p>
             </div>
             <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <span>Deck.gl • TailwindCSS</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">60 FPS Render</span>
+              <span>TailwindCSS</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Design criado STITCH</span>
             </div>
           </div>
 
@@ -55,15 +55,17 @@ export default function Docs() {
                 Camada 02
               </span>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Scraping Workers Distribuídos
+                Scraping Workers e Actors
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Fila gerida por BullMQ com instâncias Chromium headless (Playwright). Rotação de proxies residenciais, jitter temporal e evasão de rate-limit adaptativa.
+                Fila gerada no APIFY, na seleção da API de codigo : nwua9Gu5YrADL7ZDj. 
+                Ela faz o scrapping de lugares baseado no prompt do GooglMaps.
+            
               </p>
             </div>
             <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <span>BullMQ • Redis • Playwright</span>
-              <span className="text-sky-600 dark:text-sky-400 font-semibold">Resiliência 99.4%</span>
+              <span> • APIFY </span>
+              <span className="text-sky-600 dark:text-sky-400 font-semibold"> BOT ACTOR</span>
             </div>
           </div>
 
@@ -74,18 +76,18 @@ export default function Docs() {
                 <span className="material-symbols-outlined text-[24px]">psychology</span>
               </div>
               <span className="text-[10px] uppercase tracking-wider text-rose-600 dark:text-rose-400 font-bold">
-                Camada 03
+                Camada Abstrata
               </span>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                NLP &amp; Pipeline de Sentimento
+                Motivos &amp; Interesses 
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Transformers fine-tunados (BERTimbau e RoBERTa Multilingual) que indexam polaridade (-1.0 a +1.0), intensidade emotiva e detecção de anomalias (review-bombing).
+                  A criação desta aplicação foi extremamente util para aprender como o processo funciona. Tambem haverá uma documentação do processo.
               </p>
             </div>
             <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <span>HuggingFace • ONNX</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">1.2ms / review</span>
+              <span>Criativos • Sentimentos</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">10/10</span>
             </div>
           </div>
 
@@ -96,17 +98,17 @@ export default function Docs() {
                 <span className="material-symbols-outlined text-[24px]">grid_4x4</span>
               </div>
               <span className="text-[10px] uppercase tracking-wider text-indigo-600 dark:text-indigo-400 font-bold">
-                Camada 04
+                Camada 03
               </span>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Heatmap Grid Engine
+                Banco de Dados
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Agregação espacial via Uber H3 (Resoluções 8 e 9). Normalização de Kernel Density Estimation (KDE) ponderada pelo fator de novidade temporal.
+                Utilize o FireStore do Firebase, já utilizei em projetos passados e com isso já tenho uma desenvoltura já com ele. Entre escolhas tinha o MongoDb.
               </p>
             </div>
             <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <span>H3 Hex Grid • PostGIS</span>
+              <span>Firebase • Firestore</span>
               <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Sub-metro Precision</span>
             </div>
           </div>
