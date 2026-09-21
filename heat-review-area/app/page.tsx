@@ -1,7 +1,7 @@
 import Map from "./components/google-maps/mapRendered";
 import MapsInput from "./components/google-maps/mapsInput";
 import Info from "./components/site-components/info";
-import RetryScrape from "./components/site-components/reScrape";
+
 import Welcome from "./components/site-components/welcome";
 
 
