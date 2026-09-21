@@ -62,7 +62,7 @@ export default function MapsInput(){
                     south: vp.getSouthWest().lat(),
                     west: vp.getSouthWest().lng(),
                 }
-                handleLocationSelect({lat, lng, address, bounds});
+                handleLocationSelect({lat, lng, address});
 
             }
             )

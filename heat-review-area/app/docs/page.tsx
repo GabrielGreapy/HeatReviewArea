@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-// Tipagem para os Cards Bento
+
 interface BentoCardProps {
   layer: string;
   title: string;
@@ -17,7 +17,7 @@ interface BentoCardProps {
   };
 }
 
-// Tipagem para os Passos do Pipeline
+
 interface FlowStepProps {
   step: string;
   title: string;

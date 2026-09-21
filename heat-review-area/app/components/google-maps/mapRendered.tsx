@@ -20,11 +20,21 @@ export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const rectanglesRef = useRef<any[]>([]);
+  const unsubscribeScrapeRef = useRef<(() => void) | null>(null);
 
   const [cityHistory, setCityHistory] = useState<Place[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
   const [isScraping, setIsScraping] = useState<boolean>(false);
   const [showScrapePrompt, setShowScrapePrompt] = useState<boolean>(false);
+
+  // Limpa o listener se o componente for desmontado
+  useEffect(() => {
+    return () => {
+      if (unsubscribeScrapeRef.current) {
+        unsubscribeScrapeRef.current();
+      }
+    };
+  }, []);
 
   // 1. Inicializa / Atualiza o Mapa
   useEffect(() => {
@@ -56,7 +66,7 @@ export default function Map() {
       setIsLoadingHistory(true);
       try {
         const historyData = await fetchCityHistory(cityName);
-        if (historyData?.length > 0) {
+        if (historyData && historyData.length > 0) {
           setCityHistory(historyData);
         } else {
           setShowScrapePrompt(true);
@@ -82,7 +92,6 @@ export default function Map() {
     }
   }, [cityHistory]);
 
-  // 4. Inicia scraping
   const handleStartScrape = async () => {
     if (!location?.address || isScraping) return;
 
@@ -91,10 +100,18 @@ export default function Map() {
 
     try {
       const data = await startScrapeJob({ cityName: location.address });
+      const runId = data.runId;
 
-      listenToScrapeJob(
-        data.runId,
+      // Cancela listener anterior se houver
+      if (unsubscribeScrapeRef.current) {
+        unsubscribeScrapeRef.current();
+      }
+
+      // Inicia novo listener e armazena na Ref
+      unsubscribeScrapeRef.current = listenToScrapeJob(
+        runId,
         async () => {
+          console.log("🎉 Raspagem concluída! Atualizando mapa...");
           const updatedHistory = await fetchCityHistory(location.address);
           setCityHistory(updatedHistory);
           setIsScraping(false);
@@ -116,7 +133,7 @@ export default function Map() {
       <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-sm bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 transition-all">
         <div className="absolute inset-0 w-full h-full z-0" ref={mapRef} />
 
-        {/* Indicator de Status Topo Direito */}
+        {/* Indicador de Status Topo Direito */}
         {cityHistory.length > 0 && !isLoadingHistory && !isScraping && (
           <div className="absolute top-3 right-3 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -182,7 +199,7 @@ export default function Map() {
         )}
       </div>
 
-      {/* Card Inferior de Reanalisar - Só aparece QUANDO JÁ EXISTEM dados */}
+      {/* Card Inferior de Reanalisar */}
       {cityHistory.length > 0 && !isLoadingHistory && (
         <div className="w-full bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-center sm:text-left">

@@ -6,14 +6,14 @@ export async function fetchCityHistory(cityName: string): Promise<Place[]> {
   if (!cityName) return [];
 
   try {
-    // Pega apenas o primeiro nome antes da vírgula (ex: "Picuí, Paraíba..." -> "Picuí")
+    
     const cleanCity = cityName.split(",")[0].trim();
     
     console.log("🔎 Buscando estabelecimentos na coleção 'places' para:", cleanCity);
 
     const placesRef = collection(dbClient, "places");
     
-    // Busca exata pelo campo 'city' conforme está no seu print
+    
     const q = query(placesRef, where("city", "==", cleanCity));
     const querySnapshot = await getDocs(q);
 

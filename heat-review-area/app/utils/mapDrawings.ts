@@ -6,30 +6,27 @@ declare global {
   }
 }
 
-const OFFSET = 0.0012; // Tamanho do quadrado ao redor do ponto (~150m)
+const OFFSET = 0.0002;
 
-/**
- * Retorna as cores de preenchimento e borda conforme a nota do local
- */
 export function getRatingColors(rating: number) {
   if (rating >= 4.5) {
-    return { fillColor: "#22c55e", strokeColor: "#16a34a" }; // Verde
+    return { fillColor: "#22c55e", strokeColor: "#16a34a" }; // 🟢 Verde (Excelente)
   }
   if (rating >= 4.0) {
-    return { fillColor: "#eab308", strokeColor: "#ca8a04" }; // Amarelo
+    return { fillColor: "#eab308", strokeColor: "#ca8a04" }; // 🟡 Amarelo (Bom/Médio)
   }
-  return { fillColor: "#ef4444", strokeColor: "#dc2626" }; // Vermelho
+  if (rating > 0) {
+    return { fillColor: "#ef4444", strokeColor: "#dc2626" }; // 🔴 Vermelho (Abaixo de 4.0)
+  }
+  // ⚪ Cinza para estabelecimentos sem nota ou sem avaliações
+  return { fillColor: "#9ca3af", strokeColor: "#6b7280" }; 
 }
 
-/**
- * Desenha os quadrados individuais no mapa e retorna as instâncias criadas
- */
 export function drawPlaceRectangles(
   map: any,
   places: Place[],
   existingRectangles: any[] = []
 ): any[] {
-  // 1. Limpa retângulos antigos
   existingRectangles.forEach((rect) => rect.setMap(null));
 
   const validPlaces = places.filter(
@@ -41,10 +38,13 @@ export function drawPlaceRectangles(
   const newRectangles: any[] = [];
   const bounds = new window.google.maps.LatLngBounds();
 
-  // 2. Desenha cada retângulo
   validPlaces.forEach((item) => {
     const { lat, lng } = item.location;
-    const rating = item.rating || 0;
+
+    // 🟢 Extração robusta da nota (suporta rating, totalScore ou stars)
+    const rawRating = item.rating ?? (item as any).totalScore ?? (item as any).stars ?? 0;
+    const rating = typeof rawRating === "number" ? rawRating : parseFloat(rawRating) || 0;
+
     const { fillColor, strokeColor } = getRatingColors(rating);
 
     const rectBounds = {
@@ -64,13 +64,12 @@ export function drawPlaceRectangles(
       bounds: rectBounds,
     });
 
-    // 3. Adiciona a janela de informações ao clicar
     const infoWindow = new window.google.maps.InfoWindow({
       content: `
         <div style="padding: 6px; color: #0f172a; font-family: sans-serif;">
           <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">${item.title || item.name}</h4>
           <p style="margin: 2px 0; font-size: 12px;">Endereço: ${item.street || item.address || 'Não informado'}</p>
-          <p style="margin: 2px 0; font-size: 12px;">Nota: <b>⭐ ${item.rating || 'Sem nota'}</b></p>
+          <p style="margin: 2px 0; font-size: 12px;">Nota: <b>${rating > 0 ? `⭐ ${rating.toFixed(1)}` : '⚪ Sem nota'}</b></p>
         </div>
       `,
     });
@@ -84,7 +83,6 @@ export function drawPlaceRectangles(
     bounds.extend({ lat, lng });
   });
 
-  // 4. Ajusta o enquadramento da câmera
   map.fitBounds(bounds);
 
   return newRectangles;

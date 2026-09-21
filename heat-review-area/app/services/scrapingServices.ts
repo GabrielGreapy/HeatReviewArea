@@ -9,6 +9,7 @@ export async function startScrapeJob({
 }: ScrapeParams) {
   const normalizedCity = cityName.trim().toLowerCase();
 
+ 
   const response = await fetch("/route/apify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -20,6 +21,13 @@ export async function startScrapeJob({
       maxReviews,
     }),
   });
+
+  const contentType = response.headers.get("content-type");
+  if( !contentType || !contentType.includes("application/json")){
+    const text = await response.text();
+    console.error("Servidor retornou algo que não é json... ops: " ,text)
+    throw new Error("A rota API retornou um HTML em vez de Json. verifique o caminho da url")
+  }
 
   const data = await response.json();
 
@@ -51,18 +59,18 @@ export function listenToScrapeJob(
 
       if (data.status === "COMPLETED") {
         console.log("🎉 Processamento concluído com sucesso!");
+        
+        setTimeout(() => unsubscribe(), 0);
         onComplete();
-        unsubscribe();
       } else if (data.status === "FAILED") {
         console.error("❌ Processamento falhou:", data.error);
+        setTimeout(() => unsubscribe(), 0);
         onError(data.error || "Falha no scraping");
-        unsubscribe();
       }
     },
     (error) => {
       console.error("❌ Erro no snapshot do Firestore:", error);
       onError(error);
-      unsubscribe();
     }
   );
 
