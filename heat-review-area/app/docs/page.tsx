@@ -29,6 +29,7 @@ interface FlowStepProps {
 
 export default function Docs() {
   const [copied, setCopied] = useState(false);
+  
 
   const handleCopy = () => {
     navigator.clipboard.writeText("npm i @termoturismo/sdk-core");
@@ -74,7 +75,7 @@ export default function Docs() {
 
           {/* Descrição */}
           <p className="text-base text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
-            O TermoTurismo é uma aplicação analítica para quem quiser utiliza-la.
+            O ThermoTurismo é uma aplicação analítica para quem quiser utiliza-la.
             que decompõe cidades em <strong>estabelecimentos</strong> e
             converte volume de opiniões (Por meio de reviews), polaridade de sentimento e dinamismo de avaliações em um{" "}
             <strong className="text-amber-600 dark:text-amber-400">campo visual</strong>.

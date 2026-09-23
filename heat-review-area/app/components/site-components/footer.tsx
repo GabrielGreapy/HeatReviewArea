@@ -1,3 +1,7 @@
+"use client"
+
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="w-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 transition-colors">
@@ -55,15 +59,15 @@ export default function Footer() {
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Documentação
             </h3>
-            <a
-              href="#docs"
+            <Link
+              href="/docs"
               className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium transition-colors"
             >
               <span>Acessar documentação do projeto</span>
               <span className="material-symbols-outlined text-[14px]">
                 arrow_forward
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Coluna 4: Status / Badge */}
